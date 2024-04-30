@@ -187,7 +187,7 @@ def spectral_clustering():
     plt.title(f'Scatter Plot with Largest ARI (σ = {groups[max_key]["sigma"]})')
     plt.colorbar(label='Cluster Label')
     plt.grid(True)
-    answers["cluster scatterplot with Largest SSE"] = plot_ARI
+    answers["cluster scatterplot with largest ARI"] = plot_ARI
 
     #Choose the cluster with the smallest value
     min_key  = min(groups, key=lambda k: groups[k]['ARI'])
