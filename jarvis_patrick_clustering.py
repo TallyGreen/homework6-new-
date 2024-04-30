@@ -146,7 +146,7 @@ def jarvis_patrick_clustering():
 
     # Create a dictionary for each parameter pair ('sigma' and 'xi').
     k_values = np.linspace(3, 8, 5)
-    smin_values = np.linspace(0.5, 5, 5)
+    smin_values = np.linspace(4, 10, 5)
     groups = {}
     for i in range(5):
         params_dict = {'k': k_values[i], 'smin': smin_values[i]}
@@ -169,10 +169,7 @@ def jarvis_patrick_clustering():
     # groups[i] = {"sigma": 0.1, "xi": 0.1, "ARI": 0.1, "SSE": 0.1}
 
     # groups is the dictionary above
-    answers["1st group, SSE"] = groups[0]['SSE']
     answers["cluster parameters"] = groups
-    
-
 
     # Create two scatter plots using `matplotlib.pyplot`` where the two
     # axes are the parameters used, with # \sigma on the horizontal axis
