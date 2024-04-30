@@ -184,10 +184,10 @@ def spectral_clustering():
     plot_ARI = plt.scatter(data_largest_ARI[:, 0], data_largest_ARI[:, 1], c=labels_largest_ARI, cmap='viridis', label='Data Points')
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
-    plt.title(f'cluster scatterplot with largest ARI (σ = {groups[min_key]["sigma"]})')
+    plt.title(f'Scatter Plot with Largest ARI (σ = {groups[max_key]["sigma"]})')
     plt.colorbar(label='Cluster Label')
     plt.grid(True)
-    answers["cluster scatterplot with largest SSE"] = plot_ARI
+    answers["cluster scatterplot with Largest SSE"] = plot_ARI
 
     #Choose the cluster with the smallest value
     min_key  = min(groups, key=lambda k: groups[k]['ARI'])
@@ -197,7 +197,7 @@ def spectral_clustering():
     plot_SSE = plt.scatter(data_smallest_SSE[:, 0], data_smallest_SSE[:, 1], c=labels_smallest_SSE, cmap='viridis', label='Data Points')
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
-    plt.title(f'Scatter Plot with smallest ARI (σ = {groups[min_key]["sigma"]})')
+    plt.title(f'Scatter Plot with Largest ARI (σ = {groups[min_key]["sigma"]})')
     plt.colorbar(label='Cluster Label')
     plt.grid(True)
     answers["cluster scatterplot with smallest SSE"] = plot_SSE
