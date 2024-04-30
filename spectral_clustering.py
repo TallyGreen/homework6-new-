@@ -62,6 +62,23 @@ def spectral(
 ) -> tuple[
     NDArray[np.int32] | None, float | None, float | None, NDArray[np.floating] | None
 ]:
+    n_samples = data.shape[0]
+    distance_matrix = np.zeros((n_samples, n_samples))
+    for i in range(n_samples):
+        for j in range(n_samples):
+            distance_matrix[i, j] = np.sqrt(np.sum((data[i] - data[j]) ** 2))
+    W =np.exp(- (distance_matrix ** 2) / (2 * (params_dict['sigma']) ** 2))
+    D = np.diag(W.sum(axis=1))
+    L = D-W
+    eigenvalues, eigenvectors = np.linalg.eigh(L)
+    eigenvalues = eigenvalues[0:params_dict['k']]
+    # Sort eigenvectors by eigenvalues
+    idx = np.argsort(eigenvalues)
+    eigenvectors = eigenvectors[:, idx]
+    computed_labels = simple_kmeans(eigenvectors[:, :params_dict['k']], params_dict['k'], iterations=300)
+    ARI = adjusted_rand_score(labels, computed_labels)
+    centroids = np.array([data[computed_labels == i].mean(axis=0) for i in range(params_dict['k'])])
+    SSE = compute_sse(data, computed_labels, centroids)
     """
     Implementation of the Spectral clustering  algorithm only using the `numpy` module.
 
@@ -78,24 +95,6 @@ def spectral(
     - ARI: float, adjusted Rand index
     - eigenvalues: eigenvalues of the Laplacian matrix
     """
-    n_samples = data.shape[0]
-    distance_matrix = np.zeros((n_samples, n_samples))
-    for i in range(n_samples):
-        for j in range(n_samples):
-            distance_matrix[i, j] = np.sqrt(np.sum((data[i] - data[j]) ** 2))
-    W =np.exp(- (distance_matrix ** 2) / (2 * (params_dict['sigma']) ** 2))
-    D = np.diag(W.sum(axis=1))
-    L = D-W
-    eigenvalues, eigenvectors = np.linalg.eigh(L)
-    # Sort eigenvectors by eigenvalues
-    idx = np.argsort(eigenvalues)
-    eigenvectors = eigenvectors[:, idx]
-    computed_labels = simple_kmeans(eigenvectors[:, :params_dict['k']], params_dict['k'], iterations=300)
-    ARI = adjusted_rand_score(labels, computed_labels)
-    centroids = np.array([data[computed_labels == i].mean(axis=0) for i in range(params_dict['k'])])
-    SSE = compute_sse(data, computed_labels, centroids)
-
-
     return computed_labels, SSE, ARI, eigenvalues
 
 
@@ -177,28 +176,28 @@ def spectral_clustering():
 
     #Choose the cluster with the largest value
     eigenvalues = list(eigenvalues_group)
-    largest_ARI_index = max(groups, key=lambda i: groups[i]["ARI"])
-    data_largest_ARI = data[0]
-    labels_largest_ARI = labels[0]
+    max_key = max(groups, key=lambda k: groups[k]['ARI'])
+    data_largest_ARI = data[max_key]
+    labels_largest_ARI = labels[max_key]
 
     plt.figure()
     plot_ARI = plt.scatter(data_largest_ARI[:, 0], data_largest_ARI[:, 1], c=labels_largest_ARI, cmap='viridis', label='Data Points')
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
-    plt.title(f'Scatter Plot with Largest ARI (σ = {groups[largest_ARI_index]["sigma"]})')
+    plt.title(f'Scatter Plot with Largest ARI (σ = {groups[max_key]["sigma"]})')
     plt.colorbar(label='Cluster Label')
     plt.grid(True)
     answers["cluster scatterplot"] = plot_ARI
 
     #Choose the cluster with the smallest value
-    smallest_SSE_index = min(groups, key=lambda i: groups[i]["SSE"])
-    data_smallest_SSE = data[1]
-    labels_smallest_SSE = labels[1]
+    min_key  = min(groups, key=lambda k: groups[k]['ARI'])
+    data_smallest_SSE = data[min_key]
+    labels_smallest_SSE = labels[min_key]
     plt.figure()
     plot_SSE = plt.scatter(data_smallest_SSE[:, 0], data_smallest_SSE[:, 1], c=labels_smallest_SSE, cmap='viridis', label='Data Points')
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
-    plt.title(f'Scatter Plot with Smallest SSE (σ = {groups[smallest_SSE_index]["sigma"]})')
+    plt.title(f'Scatter Plot with Largest ARI (σ = {groups[min_key]["sigma"]})')
     plt.colorbar(label='Cluster Label')
     plt.grid(True)
     answers["cluster scatterplot with smallest SSE"] = plot_SSE
@@ -224,7 +223,7 @@ def spectral_clustering():
     data_set_3 = [data[3], labels[3]]
     data_set_4 = [data[4], labels[4]]
     data_sets = [data_set_0, data_set_1, data_set_2, data_set_3, data_set_4]
-    largest_ARI_parameters = {'sigma': sigma_values[largest_ARI_index], 'k': 5}
+    largest_ARI_parameters = {'sigma': 0.1, 'k': 5}
     ARIs = []
     SSEs = []
     for data, labels in data_sets:
@@ -238,8 +237,6 @@ def spectral_clustering():
     answers["std_SSEs"] = np.std(SSEs)
 
     return answers
-
-
 # ----------------------------------------------------------------------
 if __name__ == "__main__":
     all_answers = spectral_clustering()
