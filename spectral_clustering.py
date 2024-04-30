@@ -184,7 +184,7 @@ def spectral_clustering():
     plot_ARI = plt.scatter(data_largest_ARI[:, 0], data_largest_ARI[:, 1], c=labels_largest_ARI, cmap='viridis', label='Data Points')
     plt.xlabel('Feature 1')
     plt.ylabel('Feature 2')
-    plt.title(f'Scatter Plot with Largest ARI (σ = {groups[max_key]["sigma"]})')
+    plt.title(f'cluster scatterplot with largest ARI (σ = {groups[min_key]["sigma"]})')
     plt.colorbar(label='Cluster Label')
     plt.grid(True)
     answers["cluster scatterplot"] = plot_ARI
