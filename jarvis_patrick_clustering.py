@@ -152,8 +152,6 @@ def jarvis_patrick_clustering():
         params_dict = {'k': k_values[i], 'smin': smin_values[i]}
         computed_labels, SSE, ARI = jarvis_patrick(data[i], labels[i],params_dict)
         groups[i] = {"k": params_dict['k'], "smin": params_dict['smin'], "ARI": ARI, "SSE": SSE}
-        if i == 0:
-            answers["1st group, SSE"] = SSE
     # Return your `jarvis_patrick` function
 
 
@@ -171,7 +169,9 @@ def jarvis_patrick_clustering():
     # groups[i] = {"sigma": 0.1, "xi": 0.1, "ARI": 0.1, "SSE": 0.1}
 
     # groups is the dictionary above
+    answers["1st group, SSE"] = groups[0]['SSE']
     answers["cluster parameters"] = groups
+    
 
 
     # Create two scatter plots using `matplotlib.pyplot`` where the two
