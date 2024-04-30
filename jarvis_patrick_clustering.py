@@ -170,6 +170,8 @@ def jarvis_patrick_clustering():
 
     # groups is the dictionary above
     answers["cluster parameters"] = groups
+    answers["1st group, SSE"] = groups[0]['SSE']
+    
 
     # Create two scatter plots using `matplotlib.pyplot`` where the two
     # axes are the parameters used, with # \sigma on the horizontal axis
